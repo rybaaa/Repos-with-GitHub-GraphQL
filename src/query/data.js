@@ -1,0 +1,1 @@
+export default {"token": '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'}
