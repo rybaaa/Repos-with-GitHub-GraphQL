@@ -5,6 +5,8 @@ export default '{\n' +
 '      pageInfo {\n' +
 '        hasNextPage\n' +
 '        endCursor\n' +
+'        hasPreviousPage\n' +
+'        startCursor\n' +
 '      }\n' +
 '      nodes {\n' +
 '        name\n' +

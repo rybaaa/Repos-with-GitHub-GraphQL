@@ -10,6 +10,10 @@ export const repositoriesModule = {
         totalRepositories: 0,
         count: 0,
         currentRepo:{},
+        hasNextPage:false,
+        endCursor: '',
+        hasPreviousPage:false,
+        startCursor: ''
     }),
     getters:{
 
@@ -33,6 +37,18 @@ export const repositoriesModule = {
         setCurrentRepo(state, repo){
             state.currentRepo = repo
         },
+        setHasNextPage(state, value){
+            state.hasNextPage = value
+        },
+        setEndCursor(state, value){
+            state.endCursor = value
+        },
+        setHasPreviousPage(state, value){
+            state.hasPreviousPage = value
+        },
+        setStartCursor(state, value){
+            state.startCursor = value
+        },
     },
     actions:{
         async fetchRepos({commit}) {
@@ -55,9 +71,13 @@ export const repositoriesModule = {
                 commit('setRepositories', response.data.data.repositoryOwner.repositories.nodes)
                 commit('setTotalRepositories', response.data.data.repositoryOwner.repositories.totalCount)
                 commit('setCount', response.data.data.repositoryOwner.repositories.nodes.length)
+                commit('setHasNextPage', response.data.data.repositoryOwner.repositories.pageInfo.hasNextPage)
+                commit('setEndCursor', response.data.data.repositoryOwner.repositories.pageInfo.endCursor)
+                commit('setHasPreviousPage', response.data.data.repositoryOwner.repositories.pageInfo.hasPreviousPage)
+                commit('setStartCursor', response.data.data.repositoryOwner.repositories.pageInfo.startCursor)
             }
-            catch {
-                alert('Error occurred')
+            catch(err) {
+                alert(err.response.data.message)
             }
             finally {
                 commit('setIsLoading', false)
