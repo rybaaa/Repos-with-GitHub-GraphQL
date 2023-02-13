@@ -8,14 +8,14 @@ export default '{\n' +
 '      }\n' +
 '      nodes {\n' +
 '        name\n' +
-'        issues(first: 3) {\n' +
+'        issues(first: 100) {\n' +
 '          edges {\n' +
 '            node {\n' +
 '              id\n' +
 '              title\n' +
 '              state\n' +
 '              bodyText\n' +
-'              comments(first: 3) {\n' +
+'              comments(first: 100) {\n' +
 '                pageInfo {\n' +
 '                  endCursor\n' +
 '                  hasNextPage\n' +

@@ -6,7 +6,7 @@
       <SimpleTypeahead
           id="typeahead_id"
           placeholder="Search..."
-          :items="this.repositories"
+          :items="this.repositories.map(repo=>repo.name)"
           :minInputLength="0"
           @selectItem="selectItemEventHandler"
       >
@@ -18,47 +18,20 @@
 <script>
 import SimpleTypeahead from 'vue3-simple-typeahead'
 import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css'
-import {mapState, mapActions} from 'vuex'
-
-// import axios from 'axios'
-// import query from '@/query/query'
-// import data from '@/query/data'
+import {mapState, mapActions, mapMutations} from 'vuex'
 
 export default {
   name: "MainPage",
   methods: {
+    ...mapMutations({
+      setCurrentRepo: 'setCurrentRepo'
+    }),
     ...mapActions({
       fetchRepos: 'fetchRepos'
     }),
-    // async getGitHubData() {
-    //   this.isLoading = false
-    //   try{
-    //     const response = await axios.post(
-    //         `https://api.github.com/graphql`,
-    //         {
-    //           query,
-    //         },
-    //         {
-    //           headers: {
-    //             'Content-Type': 'application/json',
-    //             Authorization: 'token ' + data["token"],
-    //           },
-    //         }
-    //     )
-    //     console.log(response)
-    //     this.login = response.data.data.repositoryOwner.login
-    //     this.repositories = response.data.data.repositoryOwner.repositories.nodes.map(name=>name.name)
-    //     this.totalRepositories = response.data.data.repositoryOwner.repositories.totalCount
-    //     this.count = response.data.data.repositoryOwner.repositories.nodes.length
-    //   }
-    //   catch {
-    //     alert('Error occurred')
-    //   }
-    //   finally {
-    //     this.isLoading = true
-    //   }
-    // },
     selectItemEventHandler(item){
+      const repo = this.repositories.find(repo=>repo.name===item)
+      this.setCurrentRepo(repo)
       this.$router.push(`/repository/${item}`)
     }
   },
@@ -71,7 +44,7 @@ export default {
       login: state => state.repositories.login,
       repositories:state => state.repositories.repositories,
       totalRepositories: state => state.repositories.totalRepositories,
-      count: state => state.repositories.count
+      count: state => state.repositories.count,
     }),
   },
   mounted() {

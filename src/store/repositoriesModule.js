@@ -8,7 +8,8 @@ export const repositoriesModule = {
         login: '',
         repositories:[],
         totalRepositories: 0,
-        count: 0
+        count: 0,
+        currentRepo:{},
     }),
     getters:{
 
@@ -28,7 +29,10 @@ export const repositoriesModule = {
         },
         setCount(state, count){
             state.count = count
-        }
+        },
+        setCurrentRepo(state, repo){
+            state.currentRepo = repo
+        },
     },
     actions:{
         async fetchRepos({commit}) {
@@ -48,7 +52,7 @@ export const repositoriesModule = {
                 )
                 console.log(response)
                 commit('setLogin', response.data.data.repositoryOwner.login)
-                commit('setRepositories', response.data.data.repositoryOwner.repositories.nodes.map(name=>name.name))
+                commit('setRepositories', response.data.data.repositoryOwner.repositories.nodes)
                 commit('setTotalRepositories', response.data.data.repositoryOwner.repositories.totalCount)
                 commit('setCount', response.data.data.repositoryOwner.repositories.nodes.length)
             }
