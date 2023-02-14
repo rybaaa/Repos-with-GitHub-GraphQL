@@ -1,8 +1,9 @@
 import axios from "axios";
-import data from "@/query/data";
 
 export const repositoriesModule = {
     state: () => ({
+        isAuth: false,
+        token: localStorage.getItem('token'),
         isLoading: false,
         login: '',
         avatar: '',
@@ -10,16 +11,19 @@ export const repositoriesModule = {
         repositories: [],
         totalRepositories: 0,
         count: 0,
-        currentRepo: {},
         hasNextPage: false,
         endCursor: '',
         hasPreviousPage: false,
         startCursor: '',
-        currentIssues: {},
-        countIssues:0
     }),
     getters: {},
     mutations: {
+        setIsAuth(state, value){
+            state.isAuth = value
+        },
+        setToken(state, token){
+            state.token = token
+        },
         setRepositories(state, repos) {
             state.repositories = repos
         },
@@ -38,9 +42,6 @@ export const repositoriesModule = {
         setCount(state, count) {
             state.count = count
         },
-        setCurrentRepo(state, repo) {
-            state.currentRepo = repo
-        },
         setHasNextPage(state, value) {
             state.hasNextPage = value
         },
@@ -53,15 +54,9 @@ export const repositoriesModule = {
         setStartCursor(state, value) {
             state.startCursor = value
         },
-        setCurrentIssues(state, issues) {
-            state.currentIssues = issues
-        },
-        setCountIssues(state, count){
-            state.countIssues=count
-        }
     },
     actions: {
-        async fetchRepos({commit}) {
+        async fetchRepos({commit, state}) {
             commit('setIsLoading', true)
             try {
                 const response = await axios.post(
@@ -92,11 +87,10 @@ export const repositoriesModule = {
                     {
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: 'token ' + data["token"],
+                            Authorization: 'token ' + state.token,
                         },
                     }
                 )
-                console.log(response)
                 commit('setLogin', response.data.data.repositoryOwner.login)
                 commit('setAvatar', response.data.data.repositoryOwner.avatarUrl)
                 commit('setRepositories', response.data.data.repositoryOwner.repositories.nodes)
@@ -107,13 +101,13 @@ export const repositoriesModule = {
                 commit('setHasPreviousPage', response.data.data.repositoryOwner.repositories.pageInfo.hasPreviousPage)
                 commit('setStartCursor', response.data.data.repositoryOwner.repositories.pageInfo.startCursor)
             } catch (err) {
+                commit('setIsAuth', false)
                 alert(err.response.data.message)
             } finally {
                 commit('setIsLoading', false)
             }
         },
-        async loadNextRepos({commit}) {
-            console.log(this.state.repositories.endCursor)
+        async loadNextRepos({commit,state}) {
             commit('setIsLoading', true)
             try {
                 const response = await axios.post(
@@ -126,7 +120,7 @@ export const repositoriesModule = {
     repositories(
       first: 100
       orderBy: {field: NAME, direction: ASC}
-      after: "${this.state.repositories.endCursor}"
+      after: "${state.endCursor}"
     ) {
       totalCount
       pageInfo {
@@ -148,11 +142,10 @@ export const repositoriesModule = {
                     {
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: 'token ' + data["token"],
+                            Authorization: 'token ' + state.token,
                         },
                     }
                 )
-                console.log(response)
                 commit('setLogin', response.data.data.repositoryOwner.login)
                 commit('setAvatar', response.data.data.repositoryOwner.avatarUrl)
                 commit('setRepositories', response.data.data.repositoryOwner.repositories.nodes)
@@ -168,7 +161,7 @@ export const repositoriesModule = {
                 commit('setIsLoading', false)
             }
         },
-        async loadPrevRepos({commit}) {
+        async loadPrevRepos({commit,state}) {
             commit('setIsLoading', true)
             try {
                 const response = await axios.post(
@@ -181,7 +174,7 @@ export const repositoriesModule = {
     repositories(
       first: 100
       orderBy: {field: NAME, direction: ASC}
-      before: "${this.state.repositories.startCursor}"
+      before: "${state.startCursor}"
     ) {
       totalCount
       pageInfo {
@@ -203,11 +196,10 @@ export const repositoriesModule = {
                     {
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: 'token ' + data["token"],
+                            Authorization: 'token ' + state.token,
                         },
                     }
                 )
-                console.log(response)
                 commit('setLogin', response.data.data.repositoryOwner.login)
                 commit('setRepositories', response.data.data.repositoryOwner.repositories.nodes)
                 commit('setTotalRepositories', response.data.data.repositoryOwner.repositories.totalCount)
@@ -222,48 +214,6 @@ export const repositoriesModule = {
                 commit('setIsLoading', false)
             }
         },
-        async fetchRepo({commit}) {
-            console.log(this.state.repositories.currentRepo.name)
-            console.log(this.state.repositories.currentRepo.owner.login)
-            commit('setIsLoading', true)
-            try {
-                const response = await axios.post(
-                    `https://api.github.com/graphql`,
-                    {
-                        "query": `query MyQuery {
-  repository(name: "${this.state.repositories.currentRepo.name}", owner: "${this.state.repositories.currentRepo.owner.login}") {
-    issues(first: 100, orderBy: {field: CREATED_AT, direction: ASC}) {
-      totalCount
-      nodes {
-        bodyText
-        state
-        title
-        comments(first: 100, orderBy: {field: UPDATED_AT, direction: ASC}) {
-          nodes {
-            bodyText 
-            createdAt
-          }
-        }
-      }
-    }
-  }
-}`,
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: 'token ' + data["token"],
-                        },
-                    }
-                )
-                console.log(response)
-                commit('setCurrentIssues', response.data.data.repository.issues)
-                commit('setCountIssues', response.data.data.repository.issues.nodes.length)
-            } catch (err) {
-                alert(err.response.data.message)
-            } finally {
-                commit('setIsLoading', false)
-            }
-        }
-    }
+    },
+    namespaced:true
 }

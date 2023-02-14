@@ -1,7 +1,13 @@
 <template>
   <div class="main">
-    <span v-if="this.isLoading" class="loader"></span>
-    <div v-else class="dropdown">
+    <h1>REPOSITORIES SEARCHING</h1>
+    <div v-show="!isAuth" class="login">
+      <h2>Your token</h2>
+      <input class="input" :value="token" @input="updateInput" type="text" placeholder="Enter your Github token to get access">
+      <button class="btn" @click="initialize(true)">OK</button>
+    </div>
+    <span v-if="isLoading" class="loader"></span>
+    <div v-if="!isLoading && isAuth" class="dropdown">
       <h2>{{this.login}}</h2>
       <img class="avatar" :src="this.avatar" alt="avatar"/>
       <div class="header">
@@ -23,6 +29,8 @@
           @selectItem="selectItemEventHandler"
       >
       </SimpleTypeahead>
+      <h3>You can change your token if something went wrong</h3>
+      <button @click="changeToken" class="btn2">Change token</button>
     </div>
   </div>
 </template>
@@ -36,17 +44,30 @@ export default {
   name: "MainPage",
   methods: {
     ...mapMutations({
-      setCurrentRepo: 'setCurrentRepo',
+      setIsAuth: 'repositories/setIsAuth',
+      setToken:'repositories/setToken',
+      setCurrentRepo: 'issues/setCurrentRepo',
     }),
     ...mapActions({
-      fetchRepos: 'fetchRepos',
-      loadNextRepos: 'loadNextRepos',
-      loadPrevRepos:'loadPrevRepos'
+      fetchRepos: 'repositories/fetchRepos',
+      loadNextRepos: 'repositories/loadNextRepos',
+      loadPrevRepos:'repositories/loadPrevRepos'
     }),
     selectItemEventHandler(item) {
       const repo = this.repositories.find(repo => repo.name === item)
       this.setCurrentRepo(repo)
       this.$router.push(`/repository/${item}`)
+    },
+    updateInput(event) {
+      this.setToken(event.target.value)
+      localStorage.setItem('token', event.target.value)
+    },
+    initialize(value){
+      this.setIsAuth(value)
+      this.fetchRepos()
+    },
+    changeToken(){
+      this.setIsAuth(false)
     }
   },
   components: {
@@ -54,6 +75,8 @@ export default {
   },
   computed: {
     ...mapState({
+      isAuth: state => state.repositories.isAuth,
+      token: state => state.repositories.token,
       isLoading: state => state.repositories.isLoading,
       login: state => state.repositories.login,
       avatar: state => state.repositories.avatar,
@@ -65,7 +88,6 @@ export default {
     }),
   },
   mounted() {
-    this.fetchRepos()
   }
 }
 </script>
@@ -81,6 +103,28 @@ export default {
   flex-direction: column;
   margin: 0 auto 200px;
   text-align:justify;
+
+  .login{
+    @include flex(row, center, center);
+    gap: 10px;
+    margin-top: 50px;
+    .input{
+      width: 400px;
+      height: 40px;
+      padding:5px;
+      border-radius: 10px;
+    }
+    .btn{
+      width: 50px;
+      height: 40px;
+      border-radius: 10px;
+      background-color: #fa6400;
+      cursor: pointer;
+      &:hover{
+        opacity: 0.8;
+      }
+    }
+  }
 
   .loader {
     @include loader;
@@ -124,6 +168,16 @@ export default {
     .avatar{
       width: 100px;
       height: 100px;
+    }
+    .btn2{
+      width: 200px;
+      height: 40px;
+      border-radius: 10px;
+      background-color: #fa6400;
+      cursor: pointer;
+      &:hover{
+        opacity: 0.8;
+      }
     }
   }
 }

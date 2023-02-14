@@ -5,8 +5,18 @@
       <h1>Repository:{{ $route.params.title }}</h1>
     </div>
     <span v-if="this.isLoading" class="loader"></span>
-    <div class="repoList" v-else>
-      <h2>Issues: {{this.countIssues}} of {{this.currentIssues.totalCount}}</h2>
+    <div class="issuesList" v-else>
+      <div class="issuesPagination">
+        <div @click="this.fetchPrevIssues" v-show="this.hasPreviousPage" class="icons">
+          <div class="triangle-left"></div>
+          <span class="icon_text">Load previous repositories</span>
+        </div>
+        <h2>Issues: {{ this.countIssues }} of {{ this.currentIssues.totalCount }}</h2>
+        <div @click="this.fetchNextIssues" v-show="this.hasNextPage" class="icons">
+          <div class="triangle-right"></div>
+          <span class="icon_text">Load next repositories</span>
+        </div>
+      </div>
       <IssueItem
           v-for="(issue, index) in this.currentIssues.nodes"
           :index="index"
@@ -27,18 +37,22 @@ export default {
   components: {IssueItem},
   methods: {
     ...mapActions({
-      fetchRepo: 'fetchRepo',
+      fetchIssues: 'issues/fetchIssues',
+      fetchPrevIssues: 'issues/fetchPrevIssues',
+      fetchNextIssues: 'issues/fetchNextIssues'
     })
   },
   computed: {
     ...mapState({
-      isLoading: state => state.repositories.isLoading,
-      currentIssues: state => state.repositories.currentIssues,
-      countIssues: state => state.repositories.countIssues
+      isLoading: state => state.issues.isLoading,
+      currentIssues: state => state.issues.currentIssues,
+      countIssues: state => state.issues.countIssues,
+      hasNextPage: state => state.issues.hasNextPage,
+      hasPreviousPage: state => state.issues.hasPreviousPage
     })
   },
   mounted() {
-    this.fetchRepo()
+    this.fetchIssues(this.$route.params.title)
   }
 }
 </script>
@@ -51,14 +65,44 @@ export default {
   padding: 50px 0;
   @include flex(column, flex-start, center);
   background: linear-gradient(90deg, rgba(40, 154, 59, 1) 13%, rgba(163, 232, 167, 1) 100%, rgba(68, 138, 36, 1) 100%, rgba(78, 233, 72, 1) 100%, rgba(97, 177, 86, 1) 100%);
-.header{
-  @include flex(column, center, center);
-  gap:10px;
-}
 
-  .repoList {
+  .header {
+    @include flex(column, center, center);
+    gap: 10px;
+  }
+
+  .issuesList {
     @include flex(column, center, center);
     width: 80%;
+    .issuesPagination{
+      @include flex(row, center, center);
+      gap:10px;
+      .icons {
+        @include flex(column, center, center);
+        cursor: pointer;
+
+        .triangle-left {
+          @include arrows;
+          transform: rotate(-45deg);
+
+          &:after {
+            @include arrowsAfter;
+          }
+        }
+
+        .triangle-right {
+          @include arrows;
+          transform: rotate(135deg);
+
+          &:after {
+            @include arrowsAfter;
+          }
+        }
+        .icon_text{
+          text-align: center;
+        }
+      }
+    }
   }
 
   .loader {

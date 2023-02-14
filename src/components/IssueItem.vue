@@ -2,7 +2,7 @@
   <div class="issue" @click="showComments">
     <h2>Issue №{{ index + 1 }}</h2>
     <h3>Title:{{ issue.title }}</h3>
-    <span>Description:{{ issue.bodyText }}</span>
+    <span class="description">Description:{{ issue.bodyText }}</span>
     <span>Status: {{ issue.state }}</span>
     <h2 v-show="isActive">Comments</h2>
     <div v-show="this.issue.comments.nodes.length" class="comments">
@@ -68,6 +68,7 @@ export default {
   gap: 5px;
   color: #fff;
   cursor: pointer;
+  box-sizing: content-box;
 
   &:hover {
     opacity: 0.8;
@@ -78,6 +79,9 @@ export default {
     .item{
       width: 100%;
     }
+  }
+  .description{
+    word-break: break-word;
   }
 }
 </style>
