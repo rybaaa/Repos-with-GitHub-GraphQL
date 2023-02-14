@@ -1,42 +1,69 @@
 <template>
   <div class="wrapper">
-    <button class="btn" @click="$router.push('/')">Back to Main</button>
-    <h1>Repository:{{ $route.params.title }}</h1>
-    <h2>Total issues in repository: {{ this.currentRepo.issues.totalCount }}</h2>
-    <IssueItem
-        v-for="(issue, index) in this.currentRepo.issues.edges"
-        :index="index"
-        :issue='issue'
-        :key="index"
-    >
-    </IssueItem>
+    <div class="header">
+      <button class="btn" @click="$router.push('/')">Back to Main</button>
+      <h1>Repository:{{ $route.params.title }}</h1>
+    </div>
+    <span v-if="this.isLoading" class="loader"></span>
+    <div class="repoList" v-else>
+      <h2>Issues: {{this.countIssues}} of {{this.currentIssues.totalCount}}</h2>
+      <IssueItem
+          v-for="(issue, index) in this.currentIssues.nodes"
+          :index="index"
+          :issue='issue'
+          :key="index"
+      >
+      </IssueItem>
+    </div>
   </div>
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapActions, mapState} from 'vuex'
 import IssueItem from "@/components/IssueItem";
 
 export default {
   name: "RepositoryPage",
   components: {IssueItem},
-  methods: {},
+  methods: {
+    ...mapActions({
+      fetchRepo: 'fetchRepo',
+    })
+  },
   computed: {
     ...mapState({
-      currentRepo: state => state.repositories.currentRepo,
+      isLoading: state => state.repositories.isLoading,
+      currentIssues: state => state.repositories.currentIssues,
+      countIssues: state => state.repositories.countIssues
     })
+  },
+  mounted() {
+    this.fetchRepo()
   }
 }
 </script>
 
 <style scoped lang="scss">
+@import "../common/sass/mixins";
+
 .wrapper {
   width: 100%;
-  margin: 0 auto;
   padding: 50px 0;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(90deg, rgba(40,154,59,1) 13%, rgba(163,232,167,1) 100%, rgba(68,138,36,1) 100%, rgba(78,233,72,1) 100%, rgba(97,177,86,1) 100%);
+  @include flex(column, flex-start, center);
+  background: linear-gradient(90deg, rgba(40, 154, 59, 1) 13%, rgba(163, 232, 167, 1) 100%, rgba(68, 138, 36, 1) 100%, rgba(78, 233, 72, 1) 100%, rgba(97, 177, 86, 1) 100%);
+.header{
+  @include flex(column, center, center);
+  gap:10px;
+}
+
+  .repoList {
+    @include flex(column, center, center);
+    width: 80%;
+  }
+
+  .loader {
+    @include loader;
+  }
 
   .btn {
     align-items: center;
@@ -58,7 +85,7 @@ export default {
     padding: calc(.875rem - 1px) calc(1.5rem - 1px);
     position: relative;
     text-decoration: none;
-    transition: all 250ms;
+    transition: all 500ms;
     user-select: none;
     touch-action: manipulation;
     vertical-align: baseline;

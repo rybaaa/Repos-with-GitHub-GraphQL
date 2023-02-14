@@ -2,15 +2,17 @@
   <div class="main">
     <span v-if="this.isLoading" class="loader"></span>
     <div v-else class="dropdown">
+      <h2>{{this.login}}</h2>
+      <img class="avatar" :src="this.avatar" alt="avatar"/>
       <div class="header">
-        <div v-show="this.hasPreviousPage" class="icons">
+        <div @click="loadPrevRepos" v-show="this.hasPreviousPage" class="icons">
           <div class="triangle-left"></div>
-          <span>Load previous repositories</span>
+          <span class="icon_text">Load previous repositories</span>
         </div>
         <h2>Repositories: {{ this.count }} of {{ this.totalRepositories }}</h2>
-        <div v-show="this.hasNextPage" class="icons">
+        <div @click="this.loadNextRepos" v-show="this.hasNextPage" class="icons">
           <div class="triangle-right"></div>
-          <span>Load next repositories</span>
+          <span class="icon_text">Load next repositories</span>
         </div>
       </div>
       <SimpleTypeahead
@@ -37,7 +39,9 @@ export default {
       setCurrentRepo: 'setCurrentRepo',
     }),
     ...mapActions({
-      fetchRepos: 'fetchRepos'
+      fetchRepos: 'fetchRepos',
+      loadNextRepos: 'loadNextRepos',
+      loadPrevRepos:'loadPrevRepos'
     }),
     selectItemEventHandler(item) {
       const repo = this.repositories.find(repo => repo.name === item)
@@ -52,6 +56,7 @@ export default {
     ...mapState({
       isLoading: state => state.repositories.isLoading,
       login: state => state.repositories.login,
+      avatar: state => state.repositories.avatar,
       repositories: state => state.repositories.repositories,
       totalRepositories: state => state.repositories.totalRepositories,
       count: state => state.repositories.count,
@@ -65,7 +70,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import "../common/sass/mixins";
 
 .main {
@@ -75,25 +80,10 @@ export default {
   align-items: center;
   flex-direction: column;
   margin: 0 auto 200px;
+  text-align:justify;
 
   .loader {
-    width: 48px;
-    height: 48px;
-    border: 5px solid #FFF;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-  }
-
-  @keyframes rotation {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+    @include loader;
   }
 
   .dropdown {
@@ -126,7 +116,14 @@ export default {
             @include arrowsAfter;
           }
         }
+        .icon_text{
+          text-align: center;
+        }
       }
+    }
+    .avatar{
+      width: 100px;
+      height: 100px;
     }
   }
 }

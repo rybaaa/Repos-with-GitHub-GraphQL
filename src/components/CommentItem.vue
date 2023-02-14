@@ -1,12 +1,9 @@
 <template>
   <div class="wrapper">
-    <div v-if="true" class="comment">
+    <div class="comment">
       <h3>Comment №{{ index + 1 }}</h3>
-      <span>Description: {{ comment.bodyText }}</span>
+      <span class="description">Description: {{ comment.bodyText }}</span>
       <span>Created: {{ comment.createdAt.replace(/[A-Z]/g, ' ') }}</span>
-    </div>
-    <div v-else>
-      <h3>No comments in this issue</h3>
     </div>
   </div>
 </template>
@@ -35,18 +32,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../common/sass/mixins";
 .wrapper {
-  display: flex;
-  flex-direction: column;
+  @include flex(column, center, center);
+  border: 2px solid #282626;
+  border-radius: 10px;
+  margin-bottom: 10px;
 
   .comment {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .noComment {
-    width: 100px;
-    height: 100px;
+    @include flex(column, center, center);
+    padding:5px;
+    gap:10px;
+    .description{
+      text-align: center;
+      max-width: 80%;
+    }
   }
 }
 </style>
