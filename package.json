@@ -1,16 +1,20 @@
 {
   "name": "vue_app",
   "version": "0.1.0",
+  "homepage": "https://rybaaa.github.io/Repos-with-GitHub-GraphQL",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
     "axios": "^1.3.2",
     "core-js": "^3.8.3",
+    "gh-pages": "^5.0.0",
     "roboto-fontface": "*",
     "vue": "^3.2.13",
     "vue-router": "^4.1.6",
