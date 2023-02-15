@@ -9,16 +9,12 @@ npm install
 ```
 npm run serve
 ```
+### Stack
+- [x] Vue3
+- [x] Vuex
+- [x] Vue Router
+- [x] Javascript
+- [x] GraphQL
+- [x] Axios
+- [x] SCSS
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
