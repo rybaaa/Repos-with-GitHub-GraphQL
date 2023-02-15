@@ -3,12 +3,13 @@
     <h1>SEARCHING REPOSITORIES</h1>
     <div v-show="!isAuth" class="login">
       <h2>Your token</h2>
-      <input class="input" :value="token" @input="updateInput" type="text" placeholder="Enter your Github token to get access">
+      <input class="input" :value="token" @input="updateInput" type="text"
+             placeholder="Enter your Github token to get access">
       <button class="btn" @click="initialize(true)">OK</button>
     </div>
     <span v-if="isLoading" class="loader"></span>
     <div v-if="!isLoading && isAuth" class="dropdown">
-      <h2>{{this.login}}</h2>
+      <h2>{{ this.login }}</h2>
       <img class="avatar" :src="this.avatar" alt="avatar"/>
       <div class="header">
         <div @click="loadPrevRepos" v-show="this.hasPreviousPage" class="icons">
@@ -44,13 +45,13 @@ export default {
   methods: {
     ...mapMutations({
       setIsAuth: 'repositories/setIsAuth',
-      setToken:'repositories/setToken',
+      setToken: 'repositories/setToken',
       setCurrentRepo: 'issues/setCurrentRepo',
     }),
     ...mapActions({
       fetchRepos: 'repositories/fetchRepos',
       loadNextRepos: 'repositories/loadNextRepos',
-      loadPrevRepos:'repositories/loadPrevRepos'
+      loadPrevRepos: 'repositories/loadPrevRepos'
     }),
     selectItemEventHandler(item) {
       const repo = this.repositories.find(repo => repo.name === item)
@@ -61,11 +62,11 @@ export default {
       this.setToken(event.target.value)
       localStorage.setItem('token', event.target.value)
     },
-    initialize(value){
+    initialize(value) {
       this.setIsAuth(value)
       this.fetchRepos()
     },
-    changeToken(){
+    changeToken() {
       this.setIsAuth(false)
     }
   },
@@ -101,25 +102,28 @@ export default {
   align-items: center;
   flex-direction: column;
   margin: 0 auto 200px;
-  text-align:justify;
+  text-align: justify;
 
-  .login{
+  .login {
     @include flex(row, center, center);
     gap: 10px;
     margin-top: 50px;
-    .input{
+
+    .input {
       width: 400px;
       height: 40px;
-      padding:5px;
+      padding: 5px;
       border-radius: 10px;
     }
-    .btn{
+
+    .btn {
       width: 50px;
       height: 40px;
       border-radius: 10px;
       background-color: #fa6400;
       cursor: pointer;
-      &:hover{
+
+      &:hover {
         opacity: 0.8;
       }
     }
@@ -159,22 +163,26 @@ export default {
             @include arrowsAfter;
           }
         }
-        .icon_text{
+
+        .icon_text {
           text-align: center;
         }
       }
     }
-    .avatar{
+
+    .avatar {
       width: 100px;
       height: 100px;
     }
-    .btn2{
+
+    .btn2 {
       width: 200px;
       height: 40px;
       border-radius: 10px;
       background-color: #fa6400;
       cursor: pointer;
-      &:hover{
+
+      &:hover {
         opacity: 0.8;
       }
     }
