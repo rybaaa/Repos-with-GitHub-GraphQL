@@ -38,6 +38,7 @@
 
 <script>
 import SimpleTypeahead from 'vue3-simple-typeahead'
+import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css'
 import {mapState, mapActions, mapMutations} from 'vuex'
 
 export default {
