@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1>REPOSITORIES SEARCHING</h1>
+    <h1>SEARCHING REPOSITORIES</h1>
     <div v-show="!isAuth" class="login">
       <h2>Your token</h2>
       <input class="input" :value="token" @input="updateInput" type="text" placeholder="Enter your Github token to get access">
@@ -37,7 +37,6 @@
 
 <script>
 import SimpleTypeahead from 'vue3-simple-typeahead'
-import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css'
 import {mapState, mapActions, mapMutations} from 'vuex'
 
 export default {

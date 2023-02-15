@@ -1,4 +1,4 @@
-# vue_app
+# App with searching of GitHub repositories
 
 ## Project setup
 ```
